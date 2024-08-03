@@ -1,19 +1,38 @@
+const img = document.getElementById( 'img' );
+const buttons = document.getElementById( 'buttons' );
+let colorIndex = 0;
+let intervalId = null;
 
-const redBtn = document.getElementById('redBtn')
-const yellowBtn = document.getElementById('yellowBtn')
-const greenBtn = document.getElementById('greenBtn')
-const autoBtn = document.getElementById('autoBtn')
-const image = document.getElementById('image')
+const trafficLight = ( event ) => {
+    stopAutomatic();
+    turnOn[event.target.id]();
+}
 
-redBtn.addEventListener('click', () => {
-    image.src = "./assets/vermelho.png"
-})
+const nextIndex = () => colorIndex = colorIndex < 2 ? ++colorIndex : 0;
 
-yellowBtn.addEventListener('click', () => {
-    image.src = "./assets/amarelo.png"
-})
+const changeColor = () => {
+    const colors = ['red','yellow','green']
+    const color = colors[ colorIndex ];
+    turnOn[color]();
+    nextIndex();
+}
 
-greenBtn.addEventListener('click', () => {
-    image.src = "./assets/verde.png"
-})
+const stopAutomatic = () => {
+    clearInterval ( intervalId );
+}
 
+const turnOn = {
+    'red':      () => img.src = './assets/vermelho.png',
+    'yellow':   () => img.src = './assets/amarelo.png',
+    'green':    () => img.src = './assets/verde.png',
+    'automatic': () => {
+        intervalId = setInterval( changeColor, 1000 )
+        buttons.children.automatic.id = 'stop';
+    },
+    'stop': () => {
+        stopAutomatic()
+        buttons.children.stop.id = 'automatic';
+    }
+}
+
+buttons.addEventListener('click', trafficLight );
